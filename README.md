@@ -29,3 +29,15 @@ python main.py
  
 ## License 
 MIT License 
+
+## CI Status
+![OSE CI](https://github.com/doujiaozh/OmniScience-Engine/actions/workflows/python-app.yml/badge.svg)
+
+## Live Demo Output
+```text
+[OSE-Bio] Initializing Real BioProcessor...
+[OSE-Phys] Initializing Real PhysSim Accelerator...
+[OSE-AI] Initializing Real LightAIModel with Training Loop...
+Done! Real AI Score: 0.5982
+Time: 0.65 s
+```
