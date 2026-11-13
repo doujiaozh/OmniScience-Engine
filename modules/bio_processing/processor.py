@@ -1,10 +1,11 @@
-import torch 
- 
-class BioProcessor: 
-    def __init__(self): 
-        print("[OSE-Bio] Initializing BioProcessor...") 
- 
-    def process_genomic_data(self, raw_sequence): 
-        seq_len = len(raw_sequence) 
-        features = torch.randn(1, 64) 
-        return {"feature_vector": features, "seq_length": seq_len} 
+import torch
+
+class BioProcessor:
+    def __init__(self):
+        print("[OSE-Bio] Initializing Real BioProcessor...")
+
+    def process(self, seq):
+        mapping = {"A": 0, "T": 1, "C": 2, "G": 3}
+        idx = [mapping.get(b, 0) for b in seq]
+        one_hot = torch.nn.functional.one_hot(torch.tensor(idx), num_classes=4).float()
+        return one_hot.flatten().unsqueeze(0)
