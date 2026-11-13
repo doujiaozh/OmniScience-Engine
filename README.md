@@ -7,7 +7,7 @@ OmniScience-Engine (OSE) is an ambitious open-source project aiming to bridge th
  
 ## The Win7 Hardcore Challenge 
 This MVP was successfully built and executed on a legacy Windows 7 system with Python 3.11. 
-We bypassed numerous legacy DLL limitations (e.g., shm.dll, rpds, pydantic_core) to achieve a seamless end-to-end pipeline in 0.07 seconds! 
+We bypassed numerous legacy DLL limitations (e.g., shm.dll, rpds, pydantic_core) to achieve a seamless end-to-end pipeline in 0.65 seconds! 
  
 ## Core Architecture (MVP Version) 
 The current standalone MVP includes: 
