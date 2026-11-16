@@ -6,15 +6,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Set up Python 3.10
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.10"
+        
     - name: Install dependencies
+      timeout-minutes: 15
       run: |
         python -m pip install --upgrade pip
-        pip install torch==2.2.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        # 核心修复：从 PyTorch 官方 CPU 源下载，不仅快，而且体积小
+        pip install torch==2.2.1 --index-url https://download.pytorch.org/whl/cpu
         pip install scipy biopython
+        
     - name: Run pipeline
       run: python main.py
