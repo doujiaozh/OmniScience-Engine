@@ -52,12 +52,12 @@ try:
     tokenizer = AutoTokenizer.from_pretrained(base_model_id, local_files_only=False)
     base_model = AutoModelForCausalLM.from_pretrained(base_model_id, torch_dtype=torch.float32)
     
-    if os.path.exists("./ose_lora_weights"):
-        peft_model = PeftModel.from_pretrained(base_model, "./ose_lora_weights")
+    if os.path.exists("./ose_lora_weights_real"):
+        peft_model = PeftModel.from_pretrained(base_model, "./ose_lora_weights_real")
         peft_model.eval()
         print("✅ 专属大脑 (LoRA) 挂载成功！")
     else:
-        print("⚠️ 未找到 ose_lora_weights 文件夹。")
+        print("⚠️ 未找到 ose_lora_weights_real 文件夹。")
         peft_model = base_model
 except Exception as e:
     print(f"❌ 模型加载失败: {e}")
@@ -103,11 +103,11 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[TextConten
                 
                 llm_analysis = ""
                 if peft_model and tokenizer:
-                    prompt = f"<|im_start|>system\n你是一个专业的生信AI助手。<|im_end|>\n<|im_start|>user\n请分析序列 {target_seq} 的预测结果。置信度为 {score:.4f}。<|im_end|>\n<|im_start|>assistant\n"
+                    prompt = f"<|im_start|>system\n你是一个专业的生信AI助手。<|im_end|>\n<|im_start|>user\n请分析序列 {target_seq} 的物理特性。<|im_end|>\n<|im_start|>assistant\n"
                     inputs = tokenizer(prompt, return_tensors="pt")
                     
                     with torch.no_grad():
-                        outputs = peft_model.generate(**inputs, max_new_tokens=40, temperature=0.7, do_sample=True)
+                        outputs = peft_model.generate(**inputs, max_new_tokens=40, do_sample=False)
                     
                     generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
                     clean_reply = generated_text.split('assistant\n')[-1].strip()
