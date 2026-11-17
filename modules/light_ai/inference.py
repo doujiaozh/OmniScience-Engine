@@ -13,16 +13,17 @@ class LightAIModel(nn.Module):
             nn.Sigmoid()
         )
         self.optimizer = optim.Adam(self.parameters(), lr=0.01)
-        self.criterion = nn.BCELoss()
+        # 改用 MSELoss，对云端环境的精度要求更宽容
+        self.criterion = nn.MSELoss()
 
     def forward(self, x):
         return self.net(x)
 
     def train_and_predict(self, states):
-        x = states.view(1, 10)
-        target = torch.tensor([[1.0]])
+        # 强制将 states 转换为 float32，并拉平形状
+        x = states.view(1, 10).float()
+        target = torch.tensor([[1.0]], dtype=torch.float32)
         
-        # Real Training Loop
         for epoch in range(5):
             self.optimizer.zero_grad()
             output = self(x)
