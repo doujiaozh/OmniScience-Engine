@@ -15,3 +15,9 @@ class LightAIModel:
  
     def train_and_predict(self, simulated_states): 
         return self.predict(simulated_states) 
+ 
+    def predict_fixed(self, simulated_states): 
+        flat = simulated_states.view(-1) 
+        mean_val = torch.mean(flat).item() 
+        import math 
+        return 1.0 / (1.0 + math.exp(-mean_val * 0.1)) 
