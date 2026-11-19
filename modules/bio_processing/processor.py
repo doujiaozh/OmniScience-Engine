@@ -1,9 +1,11 @@
 import torch
+import logging
+
+logger = logging.getLogger(__name__)
 
 class BioProcessor:
     def __init__(self):
-        print("[OSE-Bio] Initializing Real BioProcessor...")
-
+        logger.info("[OSE-Bio] Initializing BioProcessor...")
     def process(self, seq):
         mapping = {"A": 0, "T": 1, "C": 2, "G": 3}
         idx = [mapping.get(b, 0) for b in seq]
