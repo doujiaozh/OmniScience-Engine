@@ -1,19 +1,32 @@
 import torch
-import numpy as np
-from scipy.integrate import odeint
 import logging
 
 logger = logging.getLogger(__name__)
 
 class PhysSimAccelerator:
     def __init__(self):
-        logger.info("[OSE-Phys] Initializing PhysSim Accelerator...")
-    def simulate(self, bio_feats, steps=10):
-        x0 = bio_feats.mean().item()
-        t = np.linspace(0, steps * 0.1, steps)
-        def damped_oscillator(y, t, k, c):
-            x, v = y
-            dydt = [v, -k * x - c * v]
-            return dydt
-        sol = odeint(damped_oscillator, [x0, 0.0], t, args=(1.0, 0.1))
-        return torch.tensor(sol[:, 0]).float().unsqueeze(0).unsqueeze(-1)
+        logger.info("[OSE-Phys] Initializing ODE Physics Simulator (Euler Method)...")
+
+    def simulate_dynamics(self, bio_features: torch.Tensor, time_steps: int = 10):
+        x = torch.mean(bio_features).item() + 1.0
+        y = torch.max(bio_features).item() + 0.5
+        
+        alpha, beta, gamma, delta = 1.0, 0.1, 1.5, 0.075
+        dt = 0.1
+        
+        states = []
+        for _ in range(time_steps):
+            dx = (alpha * x - beta * x * y) * dt
+            dy = (delta * x * y - gamma * y) * dt
+            x += dx
+            y += dy
+            states.append([x, y])
+        
+        return torch.tensor(states, dtype=torch.float32).unsqueeze(0)
+ 
+    def simulate(self, bio_data): 
+        if isinstance(bio_data, dict): 
+            features = bio_data.get("feature_vector") 
+        else: 
+            features = bio_data 
+        return self.simulate_dynamics(features) 
