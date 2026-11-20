@@ -1,13 +1,17 @@
 import os
 
+
 def w(p, c):
     d = os.path.dirname(p)
     if d:
         os.makedirs(d, exist_ok=True)
-    with open(p, 'w', encoding='utf-8') as f:
+    with open(p, "w", encoding="utf-8") as f:
         f.write(c)
 
-w('modules/bio_processing/processor.py', '''import torch
+
+w(
+    "modules/bio_processing/processor.py",
+    """import torch
 
 class BioProcessor:
     def __init__(self):
@@ -18,9 +22,12 @@ class BioProcessor:
         idx = [mapping.get(b, 0) for b in seq]
         one_hot = torch.nn.functional.one_hot(torch.tensor(idx), num_classes=4).float()
         return one_hot.flatten().unsqueeze(0)
-''')
+""",
+)
 
-w('modules/phys_sim/accelerator.py', '''import torch
+w(
+    "modules/phys_sim/accelerator.py",
+    """import torch
 import numpy as np
 from scipy.integrate import odeint
 
@@ -39,9 +46,12 @@ class PhysSimAccelerator:
 
         sol = odeint(damped_oscillator, [x0, 0.0], t, args=(1.0, 0.1))
         return torch.tensor(sol[:, 0]).float().unsqueeze(0).unsqueeze(-1)
-''')
+""",
+)
 
-w('modules/light_ai/inference.py', '''import torch
+w(
+    "modules/light_ai/inference.py",
+    """import torch
 import torch.nn as nn
 import torch.optim as optim
 
@@ -74,9 +84,12 @@ class LightAIModel(nn.Module):
             self.optimizer.step()
             
         return self(x).item()
-''')
+""",
+)
 
-w('ose_core/scheduler.py', '''from modules.bio_processing.processor import BioProcessor
+w(
+    "ose_core/scheduler.py",
+    """from modules.bio_processing.processor import BioProcessor
 from modules.phys_sim.accelerator import PhysSimAccelerator
 from modules.light_ai.inference import LightAIModel
 import time
@@ -102,16 +115,22 @@ class OSEScheduler:
         
         print(f"Done! Real AI Score: {round(score, 4)}")
         print(f"Time: {round(time.time() - t0, 2)} s")
-''')
+""",
+)
 
-w('main.py', '''from ose_core.scheduler import OSEScheduler
+w(
+    "main.py",
+    """from ose_core.scheduler import OSEScheduler
 
 if __name__ == "__main__":
     engine = OSEScheduler()
     engine.run("ATCGATCGATCGATCG")
-''')
+""",
+)
 
-w('.github/workflows/python-app.yml', '''name: OSE CI
+w(
+    ".github/workflows/python-app.yml",
+    """name: OSE CI
 
 on: [push]
 
@@ -131,9 +150,12 @@ jobs:
         pip install scipy biopython
     - name: Run pipeline
       run: python main.py
-''')
+""",
+)
 
-w('.github/ISSUE_TEMPLATE/bug_report.md', '''---
+w(
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    """---
 name: Bug report
 about: Create a report to help us improve
 ---
@@ -144,9 +166,12 @@ A clear and concise description of what the bug is.
 **Environment:**
  - OS: Windows 7
  - Python: 3.11
-''')
+""",
+)
 
-w('LICENSE', '''MIT License
+w(
+    "LICENSE",
+    """MIT License
 
 Copyright (c) 2026 doujiaozh
 
@@ -167,9 +192,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-''')
+""",
+)
 
-w('requirements.txt', 'torch==2.2.1\nscipy\nbiopython\n')
-w('.gitignore', '__pycache__/\n*.py[cod]\n.vscode/\n*.log\n')
+w("requirements.txt", "torch==2.2.1\nscipy\nbiopython\n")
+w(".gitignore", "__pycache__/\n*.py[cod]\n.vscode/\n*.log\n")
 
 print("All premium files generated successfully!")

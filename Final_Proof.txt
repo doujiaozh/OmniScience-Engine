@@ -1,0 +1,7 @@
+=== Starting OSE Pipeline ===
+Done! Real AI Score: 0.5475
+Time: 0.35 s
+--- Testing GGGGGGGGGGGGGGGG ---
+=== Starting OSE Pipeline ===
+Done! Real AI Score: 0.5549
+Time: 0.0 s

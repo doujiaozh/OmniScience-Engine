@@ -1,9 +1,11 @@
 import sys, os
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import os
+
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_DISABLE_XET"] = "1"
-os.environ["OMP_NUM_THREADS"] = "4" # 限制 CPU 线程数，防止 Win7 卡死
+os.environ["OMP_NUM_THREADS"] = "4"  # 限制 CPU 线程数，防止 Win7 卡死
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -23,7 +25,7 @@ lora_config = LoraConfig(
     r=8,
     lora_alpha=32,
     lora_dropout=0.1,
-    target_modules=["q_proj", "v_proj"]
+    target_modules=["q_proj", "v_proj"],
 )
 peft_model = get_peft_model(model, lora_config)
 
@@ -38,10 +40,12 @@ print(f"[OSE-Train] 成功获取 {len(seqs)} 条真实序列，开始构建训�
 
 # 4. 构建真实数据集
 train_data = []
-for seq in seqs[:50]: # 取前50条
+for seq in seqs[:50]:  # 取前50条
     # 构造对话格式
     text = f"<|im_start|>system\n你是一个专业的生信AI助手。<|im_end|>\n<|im_start|>user\n请分析序列 {seq[:20]} 的物理特性。<|im_end|>\n<|im_start|>assistant\n该序列属于高度保守的蛋白质结构，具备良好的水溶性。<|im_end|>"
-    inputs = tokenizer(text, return_tensors="pt", max_length=128, truncation=True, padding="max_length")
+    inputs = tokenizer(
+        text, return_tensors="pt", max_length=128, truncation=True, padding="max_length"
+    )
     train_data.append((inputs["input_ids"], inputs["attention_mask"]))
 
 optimizer = torch.optim.AdamW(peft_model.parameters(), lr=1e-4)
@@ -54,12 +58,14 @@ for epoch in range(epochs):
     total_loss = 0
     for input_ids, attention_mask in train_data:
         optimizer.zero_grad()
-        outputs = peft_model(input_ids=input_ids, attention_mask=attention_mask, labels=input_ids)
+        outputs = peft_model(
+            input_ids=input_ids, attention_mask=attention_mask, labels=input_ids
+        )
         loss = outputs.loss
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
-    
+
     avg_loss = total_loss / len(train_data)
     print(f"Epoch {epoch+1}/{epochs} | Avg Loss: {avg_loss:.4f}")
 
